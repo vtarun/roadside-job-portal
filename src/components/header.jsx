@@ -7,8 +7,8 @@ import homeLogo from '/logo.png'
 const Header = () => {
   return (
     <>
-        <nav className='py-4 flex justify-between items-center'>
-            <Link>
+        <nav className='flex justify-between items-center'>
+            <Link to="/">
                 <img src={homeLogo} className="h-20" />
             </Link>
 

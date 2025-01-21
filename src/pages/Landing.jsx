@@ -3,8 +3,10 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import Autoplay from "embla-carousel-autoplay";
 import companies from "../data/companies.json";
+import faqs from "../data/faq.json";
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { Card, CardTitle, CardContent, CardHeader } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const LandingPage = () => {
   return (
@@ -49,13 +51,23 @@ const LandingPage = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Card Title</CardTitle>
+              <CardTitle>For Employers</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>Card Content</p>
+              Post jobs, manage applications, and find the best candidates.
             </CardContent>
           </Card>
       </section>
+
+      <Accordion type="single" collapsible>
+        {faqs.map((faq, index) =>         
+          <AccordionItem key={index} value={`item-${index + 1}`}>
+            <AccordionTrigger>{faq.question}</AccordionTrigger>
+            <AccordionContent>{faq.answer}</AccordionContent>
+          </AccordionItem>                
+        )}
+      </Accordion>
+
 
     </main>
   )
