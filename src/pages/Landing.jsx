@@ -1,28 +1,62 @@
 import { Button } from '@/components/ui/button';
 import React from 'react'
 import { Link } from 'react-router-dom';
+import Autoplay from "embla-carousel-autoplay";
+import companies from "../data/companies.json";
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Card, CardTitle, CardContent, CardHeader } from '@/components/ui/card';
 
 const LandingPage = () => {
   return (
-    <main>
-      <section className='flex flex-col gap-5 text-center mt-10 mb-10'>
-        <h1 className='flex flex-col text-6xl items-center'>Find Your Dream Job {' '}
-          <span className="flex text-6xl "> and get 
-            <img src="/logo.png" alt="Hirrd Logo" className="h-16 px-4 sm:h-20 lg:h-24"/>
+    <main className='flex flex-col gap-10 sm:gap-20 py-20 sm:py-20'>
+      <section className='text-center'>
+        <h1 className='flex flex-col items-center justify-center gradient-title text-4xl font-extrabold sm:text-6xl lg:text-8xl tracking-tighter py-4'>Find Your Dream Job{" "}
+          <span className="flex items-center gap-2 sm:gap-6"> and get{" "}
+            <img src="/logo.png" alt="Hirrd Logo" className="h-14 sm:h-24 lg:h-32"/>
           </span>
         </h1>
-        <p>Explore thousands of jobs listings or find the perfect candidate</p>
+        <p className='text-gray-300 sm:mt-4 text-xs sm:text-xl'>Explore thousands of jobs listings or find the perfect candidate</p>
       </section>
-      <div className='flex justify-center items-center gap-10 sm:gap-6'>
-        <Link to="/jobs"><Button size="lg">Find Jobs</Button></Link>
-        <Link to="/post-job"><Button size="lg" variant="destructive">Post a Job</Button></Link>
+      <div className='flex justify-center gap-6'>
+        <Link to="/jobs"><Button size="xl" variant="blue">Find Jobs</Button></Link>
+        <Link to="/post-job"><Button size="xl" variant="destructive">Post a Job</Button></Link>
       </div>
-      {/* carousel */}
+      
+      <Carousel plugins={[Autoplay({ delay: 2000 })]} className="w-full py-10">
+        <CarouselContent>
+          {companies.map(({name, id, path}) => (
+            <CarouselItem key={id} className="basis-1/3 lg:basis-1/6">
+              <img src={path} alt={name} 
+                className='h-9 sm:h-14 object-contain'
+              />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+
       {/* banner */}
+      <img src="/banner.jpeg" className="w-full"/>
 
-      <section>
+      <section className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          <Card>
+            <CardHeader>
+              <CardTitle>For Job Seekers</CardTitle>
+            </CardHeader>
+            <CardContent>
+              Search and apply for jobs, track applications, and more.
+            </CardContent>
+          </Card>
 
+          <Card>
+            <CardHeader>
+              <CardTitle>Card Title</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Card Content</p>
+            </CardContent>
+          </Card>
       </section>
+
     </main>
   )
 }
