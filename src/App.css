@@ -1,4 +1,4 @@
-.grid-container {
+.grid-background {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,7 +11,7 @@
     pointer-events: none;
     z-index: -1;
 }
-.grid-container::before {
+.grid-background::before {
     content: "";
     position: absolute;
     top: 0;
