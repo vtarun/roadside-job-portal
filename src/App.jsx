@@ -13,6 +13,7 @@ import PostJobPage from './pages/PostJob';
 import MyJobsPage from './pages/MyJobs';
 import JobListingPage from './pages/JobListing';
 import SavedJobsPage from './pages/SavedJobs';
+import ProtectedRoute from './components/protected-route';
 
 const router = createBrowserRouter([
     {   
@@ -26,31 +27,59 @@ const router = createBrowserRouter([
             },
             {
                 path: '/onboarding',
-                element: <OnboardingPage />,
+                element: (
+                    <ProtectedRoute>
+                        <OnboardingPage />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: '/jobs',
-                element: <JobsPage />,
+                element: (
+                    <ProtectedRoute>
+                        <JobsPage />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: '/job/:id',
-                element: <JobPage />,
+                element: (
+                    <ProtectedRoute>
+                        <JobPage />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: '/post-job',
-                element: <PostJobPage />,
+                element: (
+                    <ProtectedRoute>
+                        <PostJobPage />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: '/my-jobs',
-                element: <MyJobsPage />,
+                element: (
+                    <ProtectedRoute>
+                        <MyJobsPage />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: '/job-listing',
-                element: <JobListingPage />,
+                element: (
+                    <ProtectedRoute>
+                        <JobListingPage />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: '/saved-jobs',
-                element: <SavedJobsPage />,
+                element: (
+                    <ProtectedRoute>
+                        <SavedJobsPage />
+                    </ProtectedRoute>
+                ),
             }
         ],       
     }
