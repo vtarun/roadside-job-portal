@@ -20,3 +20,11 @@
     height: 100%;
     background: radial-gradient(circle, transparent, rgba(0, 0, 0, 0.9));
 }
+.profile-background{
+    background-color: rgb(64, 61, 118);
+    height: 318px;    
+}
+.profile__item:hover{
+    background-color: rgb(70, 67, 112);
+    cursor: pointer;
+}

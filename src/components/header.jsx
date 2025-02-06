@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from "./ui/button";
-import { BriefcaseBusiness, HeartIcon, PenBox, Settings } from "lucide-react";
+import { BriefcaseBusiness, HeartIcon, PenBox, Settings, LogOut } from "lucide-react";
 
 import homeLogo from '/logo.png';
 import profile from '/profile.jpg';
@@ -41,7 +41,7 @@ const Header = () => {
             </Link>
 
             <div className="flex gap-8">
-                <div className="w-10 h-10 rounded-full border border-red-200 overflow-hidden hover:shadow-white hover:border-red-600">
+                <div className="w-10 h-10 rounded-full border border-red-200 overflow-hidden hover:scale-110">
                     <button onClick={handleProfile}><img src={profile} alt="profile"/></button>
                 </div>
                 <SignedOut>
@@ -82,25 +82,25 @@ const Header = () => {
         }
 
         {showProfile && 
-            <div className='fixed top-24 right-4' onClick={handleOverlayClick}>
-                <div className="rounded-sm border w-full h-auto border-red-200 sm:w-2/3 sm:h-2/3 md:w-1/2 md:h-1/2 lg:w-72 lg:h-80 lg:top-20 lg:right-0 bg-cyan-600">
+            <div className='absolute top-24 right-4' onClick={handleOverlayClick}>
+                <div className="rounded-lg border w-full sm:w-2/3 md:w-1/2 lg:w-96 lg:top-20 lg:right-0 font-sans font-light profile-background">
                     <div className='flex p-4 gap-4 items-center w-full'>
-                        <span className="w-14 h-14 rounded-full border border-red-200 overflow-hidden hover:shadow-white hover:border-red-600">
+                        <span className="w-12 h-12 rounded-full border overflow-hidden">
                             <img src={profile} alt="profile"/>
                         </span>
-                        <span>vit1@gmail.com</span>
+                        <span className='font-medium'>vit1@gmail.com</span>
                     </div>
-                    <div className="border-t-[1px] border-[rgba(255,255,255,0.07)]flex p-4 gap-4 items-center w-full">
-                        <button>Manage account</button>
+                    <div className="border-t-[1px] border-[rgba(255,255,255,0.07)] flex p-4 items-center w-full profile__item">
+                        <button className="flex items-center gap-8 px-4 "><Settings size={18}/>Manage account</button>
                     </div>
-                    <div className="border-t-[1px] border-[rgba(255,255,255,0.07)] flex p-4 gap-4 items-center w-full">
-                        <button>My Jobs</button>
+                    <div className="border-t-[1px] border-[rgba(255,255,255,0.07)] flex p-4 gap-4 items-center w-full profile__item">
+                        <button className="flex items-center gap-8 px-4"><BriefcaseBusiness size={18}/>My Jobs</button>
                     </div>
-                    <div className="border-t-[1px] border-[rgba(255,255,255,0.07)] flex p-4 gap-4 items-center w-full">
-                        <button>Saved Jobs</button>
+                    <div className="border-t-[1px] border-[rgba(255,255,255,0.07)] flex p-4 gap-4 items-center w-full  profile__item">
+                        <button className="flex items-center gap-8 px-4"><HeartIcon size={18}/> Saved Jobs</button>
                     </div>
-                    <div className="border-t-[1px] border-[rgba(255,255,255,0.07)] flex p-4 gap-4 items-center w-full">
-                        <button className="flex"><Settings size={20} />Sign Out</button>
+                    <div className="border-t-[1px] border-[rgba(255,255,255,0.07)] flex p-4 items-center w-full  profile__item">
+                        <button className="flex items-center gap-8 px-4"><LogOut size={18} />Sign Out</button>
                     </div>
                 </div>                
             </div>
