@@ -28,3 +28,6 @@
     background-color: rgb(70, 67, 112);
     cursor: pointer;
 }
+.login-form, .signup-form{
+    background-color: rgb(64, 61, 118);
+}
