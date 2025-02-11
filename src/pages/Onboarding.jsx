@@ -1,11 +1,17 @@
 import React, { useEffect } from 'react';
-import { useUser } from '@clerk/clerk-react';
 import { BarLoader } from 'react-spinners';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import useFetch from '@/hooks/useFetch';
 
 const OnboardingPage = () => {
-  const { user, isLoaded } = useUser();
+  const {data, loading } = useFetch('http://localhost:4000/api/user', {
+      method: 'GET', 
+      headers: { 
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${localStorage.getItem("token")}`
+       }
+  });
   const navigate = useNavigate();
 
   const navigateUser = (role) => {
@@ -13,11 +19,12 @@ const OnboardingPage = () => {
   }
 
   const handleSelection = async (role) => {
-    await user.update({
-      unsafeMetadata: { role },
+    fetch('http://localhost:4000/api/user', {
+      method: 'PUT', 
+      headers: { "Content-Type": "application/json" , 'Authorization': `Bearer ${localStorage.getItem("token")}`}
     })
-    .then(() => {
-      navigateUser(role);
+    .then((response) => {
+      navigateUser(response?.role);
     })
     .catch((err) => {
       console.error("Error updating role:", err);
@@ -25,12 +32,12 @@ const OnboardingPage = () => {
   };
 
   useEffect(() => {
-    if (user?.unsafeMetadata?.role) {
-      navigateUser(user.unsafeMetadata.role);
+    if (data?.role) {
+      navigateUser(user.role);
     }
-  }, [user]);
+  }, [data]);
 
-  if(!isLoaded) {
+  if(loading) {
     return <BarLoader className="mb-4" width={"100%"} color="red" />;
   }
 
