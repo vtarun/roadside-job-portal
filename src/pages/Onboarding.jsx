@@ -19,12 +19,15 @@ const OnboardingPage = () => {
   }
 
   const handleSelection = async (role) => {
+    const email = 'vt2@gmail.com';
     fetch('http://localhost:4000/api/user', {
       method: 'PUT', 
-      headers: { "Content-Type": "application/json" , 'Authorization': `Bearer ${localStorage.getItem("token")}`}
+      headers: { "Content-Type": "application/json" , 'Authorization': `Bearer ${localStorage.getItem("token")}`},
+      body: JSON.stringify({email, role})
     })
+    .then(response =>  response.json())
     .then((response) => {
-      navigateUser(response?.role);
+      navigateUser(response?.user?.role);
     })
     .catch((err) => {
       console.error("Error updating role:", err);

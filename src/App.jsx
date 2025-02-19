@@ -7,13 +7,13 @@ import AppRootLayout from './layouts/RootLayout';
 import LandingPage from "./pages/Landing";
 import OnboardingPage from "./pages/Onboarding";
 import ErrorPage from "./pages/Error";
-// import JobsPage from "./pages/Jobs"
 import JobPage from './pages/Job';
 import PostJobPage from './pages/PostJob';
 import MyJobsPage from './pages/MyJobs';
 import JobListingPage from './pages/JobListing';
 import SavedJobsPage from './pages/SavedJobs';
 import ProtectedRoute from './components/protected-route';
+import LoginPage from './pages/Login';
 
 const router = createBrowserRouter([
     {   
@@ -24,6 +24,10 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <LandingPage />,
+            },
+            {
+                path: '/login',
+                element: <LoginPage />
             },
             {
                 path: '/onboarding',
@@ -65,14 +69,6 @@ const router = createBrowserRouter([
                     </ProtectedRoute>
                 ),
             },
-            // {
-            //     path: '/job-listing',
-            //     element: (
-            //         <ProtectedRoute>
-            //             <JobListingPage />
-            //         </ProtectedRoute>
-            //     ),
-            // },
             {
                 path: '/saved-jobs',
                 element: (

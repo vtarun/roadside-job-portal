@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input'
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const LoginPage = ({handleSuccessfullSignIn}) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [formValues, setFormValues] = useState({
     firstname: "",
@@ -34,7 +34,10 @@ const LoginPage = () => {
       const data = await response.json();
       localStorage.setItem('token', data.token);
       console.log(data);
-      navigate('/onboarding');
+      if(data?.success === true){
+        handleSuccessfullSignIn();
+        navigate('/onboarding');
+      }
     } catch(error){
       console.log(error);
 
@@ -43,9 +46,7 @@ const LoginPage = () => {
   }
 
   const signUpUser = async ({firstname, lastname, email, password}) => {
-    try{
-
-    
+    try{    
     const response = await fetch('http://localhost:4000/auth/signup', {
       method: 'POST',
       headers: { "Content-Type": "application/json" },
@@ -53,9 +54,13 @@ const LoginPage = () => {
     });
 
     const data = await response.json();
+    if(data?.success === true){
+      handleSuccessfullSignIn();
+      navigate('/onboarding');
+    }
     localStorage.setItem('token', data.token);
     console.log(data);
-
+    
   }catch(error){
     console.log(error);
   }
