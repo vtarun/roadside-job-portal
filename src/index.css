@@ -72,3 +72,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+.wmde-markdown ul {
+  list-style-type: disc;
+  padding-left: 25px;
+  background-color: #030712;
+  color: white;
+}
