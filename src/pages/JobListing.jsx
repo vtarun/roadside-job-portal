@@ -4,8 +4,6 @@ import useFetch from '@/hooks/useFetch';
 import React, {useState, useEffect } from 'react';
 import { BarLoader } from 'react-spinners';
 
-import googleLogo from "./../../public/companies/google.webp";
-import microsoftLogo from "./../../public/companies/microsoft.webp";
 import JobCard from '@/components/job-card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,43 +11,57 @@ import { Select, SelectTrigger, SelectContent, SelectGroup, SelectValue, SelectI
 import { State } from 'country-state-city';
 
 const JobListingPage = () => {
-
-  // const { session } = useSession();
-  const loading = false;
   const [searchTitle, setSerachTitle] = useState('');
   const [location, setLocation] = useState('');
   const [company_id, setCompany_id] = useState('');
-  const companies = [{id: 1, name: "Google"}, {id: 2, name: "Microsoft"}, {id: 3, name: "Amazon"}];
-  const jobs = [{
-    id: 1,
-    title: 'Frontend Developer',
-    company: {
-      id: '1',
-      logo_url: googleLogo
-    },
-    location: 'Delhi',
-    description: 'Google is looking for a frontend developer to build intuitive and responsive user interfaces for web applications that scale to millions of users.'
-  },
-  {
-    id: 2,
-    title: 'Backend Developer',
-    company: {
-      id: '1',
-      logo_url: microsoftLogo
-    },
-    location: 'Chennai',
-    description: 'Microsoft is looking for a Backend developer to build intuitive apis for web applications that scale to millions of users.'
-  },
-  {
-    id: 3,
-    title: 'Frontend Developer',
-    company: {
-      id: '1',
-      logo_url: googleLogo
-    },
-    location: 'Delhi',
-    description: 'Google is looking for a frontend developer to build intuitive and responsive user interfaces for web applications that scale to millions of users.'
-  }];
+  const {data: companies, loading: loadingCompany} = useFetch('http://localhost:4000/companies/get-companies', {
+    method: 'GET', 
+    headers: { 
+      "Content-Type": "application/json",
+      'Authorization': `Bearer ${localStorage.getItem("token")}`
+     }
+  });
+
+  const {data: { jobs }, loading: loadingJobs} = useFetch('http://localhost:4000/jobs/get-jobs', {
+    method: 'GET', 
+    headers: { 
+      "Content-Type": "application/json",
+      'Authorization': `Bearer ${localStorage.getItem("token")}`
+     }
+  });
+
+  const fetchJobs = async (filterQuery) => {
+    try{
+
+      const response = await fetch(`http://localhost:4000/jobs/get-jobs?${filterQuery}`, {
+      method: 'GET', 
+      headers: { 
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${localStorage.getItem("token")}`
+      }
+      });
+
+      const responseData = await response.json();
+    } catch(err){
+
+    } finally{
+      
+    }
+  };
+
+
+  useEffect(()=> {
+    let query="";
+    if(location){
+      query += "location="+location;
+    }
+
+    if(company_id){
+      query += "company_id="+company_id;
+    }
+    fetchJobs(query);
+  }, [location, company_id]);
+
   
   const clearSearch = () => {
     setSerachTitle('');
@@ -65,19 +77,10 @@ const JobListingPage = () => {
       console.log(searchQuery);
     }
   }
-    // const {data:jobs, loading = true, error } = useFetch('http://localhost:4000/api/jobs', {
-    //   method: 'GET', 
-    //   headers: { 
-    //     "Content-Type": "application/json",
-    //     'Authorization': `Bearer ${localStorage.getItem("token")}`
-    //   }
-    // });
-
-    // console.log(jobs);
   
 
-  if(loading) {
-    return <BarLoader className="mb-4" width={"100%"} color="red" />;
+  if(loadingJobs || loadingCompany) {
+    return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
   }
 
   return (
@@ -130,9 +133,9 @@ const JobListingPage = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-            {companies.map(({name, id}) => {
+            {companies.map(({name, _id}) => {
                 return (
-                  <SelectItem key={id} value={id}>
+                  <SelectItem key={_id} value={_id}>
                     {name}
                   </SelectItem>
                 )
@@ -147,7 +150,7 @@ const JobListingPage = () => {
 
       <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {jobs?.length ? (jobs.map(job => {
-          return <JobCard key={job.id} job={job} />
+          return <JobCard key={job._id} job={job} />
         })) : <div>No Jobs found!</div>}
       </div>
     </div>

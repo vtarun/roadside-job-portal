@@ -11,6 +11,8 @@ import { Navigate, useNavigate } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
 import AddCompanyDrawer from "@/components/add-company-drawer";
 import { Button } from "@/components/ui/button";
+import useFetch from "@/hooks/useFetch";
+import { BarLoader } from "react-spinners";
 
 
 const schema = z.object({
@@ -21,11 +23,10 @@ const schema = z.object({
   requirements: z.string().min(1, {message: "requirements are required"}),
 })
 const PostJobPage = () => {
-  const loading = false;
-  const user = {role : "recruiter"}
-  const [company_id, setCompany_id] = useState('');
+  const user = {role : "recruiter"};
+  const [creatJobLoading, setCreateJobLoading] = useState(false);
   const navigate = useNavigate();
-  const companies = [{id: 1, name: "Google"}, {id: 2, name: "Microsoft"}, {id: 3, name: "Amazon"}];
+  
   const {
     register,
     handleSubmit,
@@ -36,13 +37,38 @@ const PostJobPage = () => {
     resolver: zodResolver(schema)
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const {data: companies, loading: loadingCompany} = useFetch('http://localhost:4000/companies/get-companies', {
+      method: 'GET', 
+      headers: { 
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${localStorage.getItem("token")}`
+       }
+  });
 
-    // navigate("/jobs")
+  const onSubmit = async (data) => {
+    data.recruiter_id = 'vt2@gmail.com';
+    setCreateJobLoading(true);
+    console.log(data);
+    try{
+      const response = await fetch('http://localhost:4000/jobs/post-job', {
+        method: 'POST', 
+        headers: { 
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(data)
+      });
+      const responseData = await response.json();
+      // TODO: update properly
+      navigate("/jobs");
+    } catch(err){
+      console.log(err)
+    } finally{
+      setCreateJobLoading(false);
+    }    
   }
 
-  if(loading) {
+  if(loadingCompany) {
     return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
   }
 
@@ -98,14 +124,14 @@ const PostJobPage = () => {
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Filter by Company">
-                    {field.value ? companies.find((com) => com.id === Number(field.value))?.name : 'Company'}
+                    {field.value ? companies.find((com) => com._id === Number(field.value))?.name : 'Company'}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                  {companies.map(({name, id}) => {
+                  {companies.map(({name, _id}) => {
                       return (
-                        <SelectItem key={id} value={id}>
+                        <SelectItem key={_id} value={_id}>
                           {name}
                         </SelectItem>
                       )
@@ -128,7 +154,7 @@ const PostJobPage = () => {
           )}
         />        
         {errors.requirements && <p className="text-red-500">{errors.requirements.message}</p>}
-        {/* Loading create jobs <BarLoader  width={"100%"} color="#36d7b7" />*/}
+        {creatJobLoading && <BarLoader  width={"100%"} color="#36d7b7" />}
         
         <Button type="submit" variant="blue" size="lg" className="mt-2">Submit</Button>
       </form>

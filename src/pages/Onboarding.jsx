@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import useFetch from '@/hooks/useFetch';
 
 const OnboardingPage = () => {
-  const {data, loading } = useFetch('http://localhost:4000/api/user', {
+  const {data, loading } = useFetch('http://localhost:4000/profile/user', {
       method: 'GET', 
       headers: { 
         "Content-Type": "application/json",
@@ -20,7 +20,7 @@ const OnboardingPage = () => {
 
   const handleSelection = async (role) => {
     const email = 'vt2@gmail.com';
-    fetch('http://localhost:4000/api/user', {
+    fetch('http://localhost:4000/profile/user', {
       method: 'PUT', 
       headers: { "Content-Type": "application/json" , 'Authorization': `Bearer ${localStorage.getItem("token")}`},
       body: JSON.stringify({email, role})

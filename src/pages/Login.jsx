@@ -91,29 +91,30 @@ const LoginPage = ({handleSuccessfullSignIn}) => {
         </div>
 
         <div>
-            <div className='flex justify-evenly items-center px-8 '>
-                <Button>Github</Button>
-                <Button>Google</Button>
+            <div className='flex justify-between items-center gap-4 px-8 '>
+                <Button className="w-full">Github</Button>
+                <Button className="w-full">Google</Button>
             </div>
-            <div className='flex justify-center items-center px-8 '>
-                <div className="h-0.5"></div>
+            <div className='flex justify-center items-center py-4 px-4 '>
+                
                 <p>or</p>
-                <div className="h-0.5"></div>
             </div>
             <form className="flex flex-col items-stretch justify-start gap-8 px-8 py-4" onSubmit={handleSubmit}>
-                {isSignUp && <div className="flex justify-center items-center">
-                  <div>
-                      <label>First name</label>
-                      <Input placeholder="First name" name="firstname" type="text" value={formValues.firstname} onChange={handleInputChange}/>
+                {isSignUp && 
+                  <div className="flex justify-center items-center gap-2 ">
+                    <div>
+                        <label>First name</label>
+                        <Input placeholder="First name" name="firstname" type="text" value={formValues.firstname} onChange={handleInputChange}/>
+                    </div>
+                    <div>
+                        <label>Last name</label>
+                        <Input placeholder="Last name" name="lastname" type="text" value={formValues.lastname} onChange={handleInputChange} />
+                    </div>
                   </div>
-                  <div>
-                      <label>Last name</label>
-                      <Input placeholder="Last name" name="lastname" type="text" value={formValues.lastname} onChange={handleInputChange} />
-                  </div>
-                </div>}
+                }
                 <div>
                     <label>Email address</label>
-                    <Input placeholder="Email address" name="email" type="email" value={formValues.email} onChange={handleInputChange} />
+                    <Input placeholder="Email address" name="email" type="text" value={formValues.email} onChange={handleInputChange} />
                 </div>
                 <div>
                     <label>Password</label>
@@ -123,8 +124,8 @@ const LoginPage = ({handleSuccessfullSignIn}) => {
             </form>
         </div>
       </div>
-      <div className="flex gap-2 justify-center">
-        <p>Don't have an account? <span className="cursor-pointer" onClick={() => setIsSignUp((prev) => !prev)}>{isSignUp ? 'Sign up' : 'Login'}</span></p>
+      <div className="flex gap-2 mb-6 justify-center">
+        <p>{!isSignUp ? "Don't have an account?" : "Already have an account?"} <span className="cursor-pointer underline" onClick={() => setIsSignUp((prev) => !prev)}>{isSignUp ? 'Login': 'Sign up'}</span></p>
       </div>
     </div>
     </div>

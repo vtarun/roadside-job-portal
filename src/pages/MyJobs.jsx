@@ -16,7 +16,7 @@ const MyJobsPage = () => {
           ? "My Applications"
           : "My Jobs"}
       </h1>
-      {user?.unsafeMetadata?.role === "candidate" ? (
+      {user?.role === "candidate" ? (
         <CreatedApplications />
       ) : (
         <CreatedJobs />

@@ -54,10 +54,7 @@ const Header = () => {
             </Link>
 
             <div className="flex gap-8">
-                {showProfile && <div className="w-10 h-10 rounded-full border border-red-200 overflow-hidden hover:scale-110">
-                    <button onClick={handleProfile}><img src={profile} alt="profile"/></button>
-                </div>          
-                }
+                
                 {!isLoggedIn && <Button variant="outline" onClick={() => setShowSignInForm(true)}>Login</Button>}
                 
                 {isLoggedIn && user?.role === 'recuiter' && <Link to="/post-job">
@@ -65,6 +62,11 @@ const Header = () => {
                         <PenBox size={20} className="mr-2" />Post a Job
                     </Button>
                 </Link>}
+                
+                {showProfile && <div className="w-10 h-10 rounded-full border border-red-200 overflow-hidden hover:scale-110">
+                    <button onClick={handleProfile}><img src={profile} alt="profile"/></button>
+                </div>          
+                }
             </div>
         </nav>
 
