@@ -40,15 +40,14 @@ const JobCard = ({
         {job.description.substring(0, job.description.indexOf('.'))}
       </CardContent>
       <CardFooter className="flex gap-2">
-        <Link to={`/job/${job.id}`} className="flex-1">
+        <Link to={`/job/${job._id}`} className="flex-1">
           <Button variant="secondary" className="w-full">
             More Details
           </Button>
         </Link>
         {!isMyJob && (
             <Button variant="outline" className="w-15" onClick={handleSaveJob} disabled={loadingSavedJob}>
-                <Heart size={20} stroke="red" fill="red"/> 
-                {/* TODO: add logic to handle save and not save jobs <Heart size={20} />*/}
+                {savedInit ? <Heart size={20} stroke="red" fill="red"/> : <Heart size={20} />}
             </Button>
         )}
       </CardFooter>

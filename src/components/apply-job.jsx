@@ -126,7 +126,7 @@ const ApplyJobDrawer = ({user, job, applied=false, fetchJob}) => {
 
                 {errors.resume && (<p className="text-red-500">{errors.resume.message}</p>)}  
                 {/* form submit error apply */}
-                {errorsApply?.message && (<p className="text-red-500">{errorsApply?.message}</p>)}  
+                {/* {errorsApply?.message && (<p className="text-red-500">{errorsApply?.message}</p>)}   */}
                 
                 {loadingApply && <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />}
                 <Button type="submit" variant="blue" size="lg">Apply</Button>

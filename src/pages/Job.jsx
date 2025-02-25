@@ -1,36 +1,25 @@
 import React from 'react'
 import { useParams } from 'react-router-dom';
-import googleLogo from "./../../public/companies/google.webp";
 import { Briefcase, DoorClosed, DoorOpen, MapPinIcon } from 'lucide-react';
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectValue, SelectItem } from '@/components/ui/select';
 import MDEditor from '@uiw/react-md-editor';
 import ApplyJobDrawer from '@/components/apply-job';
+import useApi from '@/hooks/useApi';
+import { BarLoader } from 'react-spinners';
 
 const JobPage = () => {
-  const loading = false;
+
   const user = {id: 1};
   const params = useParams();
+  const { data, loading: loadingJob } = useApi(`http://localhost:4000/jobs/get-job/${params.id}`);
 // use effect to fech job based on id
-const job ={
-    id: 1,
-    title: 'Frontend Developer',
-    company: {
-      id: '1',
-      logo_url: googleLogo
-    },
-    recruiter_id: 1,
-    applications: [],
-    requirements: "- Expertise in HTML, CSS, JavaScript (ES6+).\n- Experience with React.js",
-    location: 'Delhi',
-    description: 'Google is looking for a frontend developer to build intuitive and responsive user interfaces for web applications that scale to millions of users.'
-  };
-
+  const job = data?.job;
   const handleStatusChange = (value) => {
     const isOpen = value === 'open';
     console.log(isOpen);
   }
 
-  if(loading) {
+  if(loadingJob) {
     return <BarLoader className="mb-4" width={"100%"} color="red" />;
   }
 

@@ -9,57 +9,24 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectValue, SelectItem } from '@/components/ui/select';
 import { State } from 'country-state-city';
+import useApi from '@/hooks/useApi';
 
 const JobListingPage = () => {
   const [searchTitle, setSerachTitle] = useState('');
   const [location, setLocation] = useState('');
   const [company_id, setCompany_id] = useState('');
-  const {data: companies, loading: loadingCompany} = useFetch('http://localhost:4000/companies/get-companies', {
-    method: 'GET', 
-    headers: { 
-      "Content-Type": "application/json",
-      'Authorization': `Bearer ${localStorage.getItem("token")}`
-     }
-  });
+  
+  const { data: companies, loading: loadingCompanies } = useApi('http://localhost:4000/companies/get-companies');
+  const { data, loading: loadingJobs, fetchData, updateUrl } = useApi('http://localhost:4000/jobs/get-jobs');
 
-  const {data: { jobs }, loading: loadingJobs} = useFetch('http://localhost:4000/jobs/get-jobs', {
-    method: 'GET', 
-    headers: { 
-      "Content-Type": "application/json",
-      'Authorization': `Bearer ${localStorage.getItem("token")}`
-     }
-  });
+  const jobs = data?.jobs || [];
+  useEffect(() => {
+    let query = "";
+    if (location) query += `location=${location}&`;
+    if (company_id) query += `company_id=${company_id}&`;
 
-  const fetchJobs = async (filterQuery) => {
-    try{
-
-      const response = await fetch(`http://localhost:4000/jobs/get-jobs?${filterQuery}`, {
-      method: 'GET', 
-      headers: { 
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${localStorage.getItem("token")}`
-      }
-      });
-
-      const responseData = await response.json();
-    } catch(err){
-
-    } finally{
-      
-    }
-  };
-
-
-  useEffect(()=> {
-    let query="";
-    if(location){
-      query += "location="+location;
-    }
-
-    if(company_id){
-      query += "company_id="+company_id;
-    }
-    fetchJobs(query);
+    query = query.slice(0, -1);
+    updateUrl(`http://localhost:4000/jobs/get-jobs?${query}`);
   }, [location, company_id]);
 
   
@@ -67,6 +34,7 @@ const JobListingPage = () => {
     setSerachTitle('');
     setLocation('');
     setCompany_id('');
+    fetchData(); 
   }
 
   function handleSubmit(e) {
@@ -79,7 +47,7 @@ const JobListingPage = () => {
   }
   
 
-  if(loadingJobs || loadingCompany) {
+  if(loadingJobs || loadingCompanies) {
     return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
   }
 
