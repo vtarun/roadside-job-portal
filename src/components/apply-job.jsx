@@ -53,19 +53,33 @@ const ApplyJobDrawer = ({user, job, applied=false, fetchJob}) => {
         console.log(data);
         const formData = {
             ...data,
-            job_id: job.id,
-            candidate_id: user.id,
-            name: user.fullname,
+            job_id: job._id,
+            candidate_id: user.email, //user._id
+            name: user?.fullname,
             status: 'applied',
             resume: data.resume[0]
         }
-
         console.log(formData);
+        fetch(`http://localhost:4000/applications/apply-job`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: JSON.stringify({ formData }),
+            }
+        ).then(() => {
+            console.log(formData);
+            fetchJob();
+            reset();
+        })
+
+        
     }
 
   return (
     <div>
-      <Drawer open={applied ? false : undefined} onOpenChange={()=> {}}>
+      <Drawer open={applied ? false : undefined}>
         <DrawerTrigger asChild>
             <Button size="lg" variant={job?.isOpen && !applied ? "blue" : "destructive"} disabled={!job?.isOpen || applied}>
                 {job?.isOpen ? (applied ? "Applied" : "Apply") : "Hiring Closed"}
@@ -79,7 +93,9 @@ const ApplyJobDrawer = ({user, job, applied=false, fetchJob}) => {
 
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4 pb-0">
                 <Input 
-                    {...register("experience")}
+                    {...register("experience", {
+                        valueAsNumber: true,
+                      })}
                     type="number"
                     placeholder="Years of Experience"
                     className="flex-1"
@@ -99,7 +115,7 @@ const ApplyJobDrawer = ({user, job, applied=false, fetchJob}) => {
                     control={control}
                     render={({field}) => (
 
-                        <RadioGroup onValueChange={FileDiff.onChange} {...field}>
+                        <RadioGroup onValueChange={field.onChange} {...field}>
                             <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="Intermediate" id="intermediate" />
                                 <Label htmlFor="intermediate">Intermediate</Label>

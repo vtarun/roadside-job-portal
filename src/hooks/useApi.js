@@ -35,11 +35,12 @@ const useApi = (initialUrl, options = {}, immediate = true) => {
   };
 
   useEffect(() => {
-    if (immediate && url) fetchData();
-  }, [url]);
+    if (immediate) fetchData();
+  }, []);
 
-  const updateUrl = (newUrl) => {
+  const updateUrl = (newUrl, overrideOptions = {}) => {
     setUrl(newUrl);
+    fetchData(overrideOptions);
   };
 
   return { data, loading, error, fetchData, updateUrl };

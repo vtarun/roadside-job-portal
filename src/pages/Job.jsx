@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { useParams } from 'react-router-dom';
 import { Briefcase, DoorClosed, DoorOpen, MapPinIcon } from 'lucide-react';
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectValue, SelectItem } from '@/components/ui/select';
@@ -9,14 +9,37 @@ import { BarLoader } from 'react-spinners';
 
 const JobPage = () => {
 
-  const user = {id: 1};
+  const user = {email: "vt2@gmail.com", fullname: "Vivek Tarun"};  // TODO use auth rpovider for user data
   const params = useParams();
-  const { data, loading: loadingJob } = useApi(`http://localhost:4000/jobs/get-job/${params.id}`);
-// use effect to fech job based on id
-  const job = data?.job;
-  const handleStatusChange = (value) => {
+   const [job, setJob] = useState(null);
+  const { data, loading: loadingJob, fetchData } = useApi(`http://localhost:4000/jobs/get-job/${params.id}`);
+
+  useEffect(() => {
+    if (data?.job) {
+      setJob(data.job);
+    }
+  }, [data]); 
+
+   // Function to update job status
+   const updateStatus = async (isOpen) => {
+    const response = await fetch(
+      `http://localhost:4000/jobs/update-job/${params.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ isOpen }),
+      }
+    );
+    const responseData = await response.json();
+    return responseData.job;
+  };
+  const handleStatusChange = async (value) => {
     const isOpen = value === 'open';
-    console.log(isOpen);
+    const updatedJob = await updateStatus(isOpen);
+    setJob(updatedJob);
   }
 
   if(loadingJob) {
@@ -44,7 +67,7 @@ const JobPage = () => {
         </div>
       </div>
     {/*TODO: add loading status */}
-    {job?.recruiter_id === user?.id && 
+    {job?.recruiter_id === user?.email && 
       <Select onValueChange={handleStatusChange}>
           <SelectTrigger className={`w-full ${job?.isOpen ? "bg-green-950" : "bg-red-950"}`}>
             <SelectValue placeholder={"Hiring Status " + (job?.isOpen ? "( Open )": "( Closed )")} />
@@ -70,7 +93,7 @@ const JobPage = () => {
 
 
       {/* render application */}
-      {job?.recruiter_id !== user?.id && <ApplyJobDrawer job={job} user={user} fetchJob={()=> {}} applied={job?.applications?.find((ap) => ap.candidate_id === user.id)}/>}
+      {job?.recruiter_id !== user?.email && <ApplyJobDrawer job={job} user={user} fetchJob={fetchData} applied={job?.applications?.find((ap) => ap.candidate_id === user.id)}/>}
     
       {job?.applications?.length > 0 && job?.recruiter_id === user?.id && (
         <div className='flex flex-col gap-2'>
