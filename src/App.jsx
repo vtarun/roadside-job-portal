@@ -14,6 +14,7 @@ import JobListingPage from './pages/JobListing';
 import SavedJobsPage from './pages/SavedJobs';
 import ProtectedRoute from './components/protected-route';
 import LoginPage from './pages/Login';
+import { AuthProvider } from './components/auth-provider';
 
 const router = createBrowserRouter([
     {   
@@ -85,7 +86,9 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <RouterProvider router={router} />
+        <AuthProvider>
+            <RouterProvider router={router} />
+        </AuthProvider>
     </ThemeProvider>      
   )
 }
