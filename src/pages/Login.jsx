@@ -1,7 +1,7 @@
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import useAuthApi from '@/hooks/useAuthAPi';
+import useAuthApi from '@/hooks/useAuthAPI';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
