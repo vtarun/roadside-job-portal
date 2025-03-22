@@ -1,5 +1,7 @@
+import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import useAuthApi from '@/hooks/useAuthAPi';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +14,9 @@ const LoginPage = ({handleSuccessfullSignIn}) => {
     password: "",
   });
 
+  const {login} = useAuth();
+  const { loading, error, loginUser, signUpUser } = useAuthApi();
+
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -20,64 +25,23 @@ const LoginPage = ({handleSuccessfullSignIn}) => {
     })
   }
 
-  const loginUser = async ({email, password}) => {
-    try{   
-      const response = await fetch('http://localhost:4000/auth/login', {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({email, password}),    
-      });
-      if(!response.ok) {
-        throw new Error("Invalid credentials");
-      }
-
-      const data = await response.json();
-      localStorage.setItem('token', data.token);
-      console.log(data);
-      if(data?.success === true){
-        handleSuccessfullSignIn();
-        navigate('/onboarding');
-      }
-    } catch(error){
-      console.log(error);
-
-    }
-
-  }
-
-  const signUpUser = async ({firstname, lastname, email, password}) => {
-    try{    
-    const response = await fetch('http://localhost:4000/auth/signup', {
-      method: 'POST',
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({firstname, lastname, email, password}),    
-    });
-
-    const data = await response.json();
-    if(data?.success === true){
-      handleSuccessfullSignIn();
-      navigate('/onboarding');
-    }
-    localStorage.setItem('token', data.token);
-    console.log(data);
-    
-  }catch(error){
-    console.log(error);
-  }
-
-  }
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     // Convert FormData to a usable object
     const data = Object.fromEntries(formData.entries());
-
-    console.log("Form Data:", data);
-    if(!isSignUp) {
-      loginUser(data);
-    } else{
-      signUpUser(data);
+    try{
+      const response = isSignUp 
+        ? await signUpUser(data.firstname, data.lastname, data.email, data.password)
+        : await loginUser(data.email, data.password);
+      
+      if (response?.success) {
+        login(response.user, response.token);
+        handleSuccessfullSignIn();
+        navigate('/onboarding');
+      }
+    }catch(err){
+      console.error("Error: ", err.message);
     }
   }
 
@@ -85,10 +49,10 @@ const LoginPage = ({handleSuccessfullSignIn}) => {
     <div className="flex justify-between items-center">
       <div className="w-96 login-form  rounded-lg">
       <div className="flex flex-col gap-8">
-        <div className='flex flex-col justify-center items-center'>
-            <h1>Sign in to roadside</h1>
-            <p>Welcom back! Please sign in to continue</p>
-        </div>
+      <div className="flex flex-col justify-center items-center">
+            <h1>{isSignUp ? "Sign up for roadside" : "Sign in to roadside"}</h1>
+            <p>{isSignUp ? "Create an account to get started" : "Welcome back! Please sign in to continue"}</p>
+          </div>
 
         <div>
             <div className='flex justify-between items-center gap-4 px-8 '>
@@ -103,8 +67,8 @@ const LoginPage = ({handleSuccessfullSignIn}) => {
                 {isSignUp && 
                   <div className="flex justify-center items-center gap-2 ">
                     <div>
-                        <label>First name</label>
-                        <Input placeholder="First name" name="firstname" type="text" value={formValues.firstname} onChange={handleInputChange}/>
+                        <label htmlFor='firstname'>First name</label>
+                        <Input id="firstname" placeholder="First name" name="firstname" type="text" value={formValues.firstname} onChange={handleInputChange}/>
                     </div>
                     <div>
                         <label>Last name</label>
@@ -120,12 +84,15 @@ const LoginPage = ({handleSuccessfullSignIn}) => {
                     <label>Password</label>
                     <Input placeholder="password" name="password" type="password" value={formValues.password} onChange={handleInputChange} />
                 </div>
-                <Button type="submit">Continue</Button>
+                <Button type="submit" disabled={loading}>{loading ? "Loading..." : "Continue"}</Button>
             </form>
         </div>
       </div>
+      {/* Error Message */}
+      {error && <div className="text-red-500 text-center mt-4">{error}</div>}
+
       <div className="flex gap-2 mb-6 justify-center">
-        <p>{!isSignUp ? "Don't have an account?" : "Already have an account?"} <span className="cursor-pointer underline" onClick={() => setIsSignUp((prev) => !prev)}>{isSignUp ? 'Login': 'Sign up'}</span></p>
+        <p>{!isSignUp ? "Don't have an account?" : "Already have an account?"}{" "} <span className="cursor-pointer underline" onClick={() => setIsSignUp((prev) => !prev)}>{isSignUp ? 'Login': 'Sign up'}</span></p>
       </div>
     </div>
     </div>
