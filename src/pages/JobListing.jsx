@@ -1,7 +1,3 @@
-// import { getJobs } from '@/api/apiJobs';
-// import { useSession } from '@clerk/clerk-react';
-import useFetch from '@/hooks/useFetch';
-import React, {useState, useEffect } from 'react';
 import { BarLoader } from 'react-spinners';
 
 import JobCard from '@/components/job-card';
@@ -9,46 +5,25 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectValue, SelectItem } from '@/components/ui/select';
 import { State } from 'country-state-city';
-import useApi from '@/hooks/useApi';
+import useJobListing from '@/hooks/useJobListing';
 
 const JobListingPage = () => {
-  const [searchTitle, setSerachTitle] = useState('');
-  const [location, setLocation] = useState('');
-  const [company_id, setCompany_id] = useState('');
-  
-  const { data: companies, loading: loadingCompanies } = useApi('http://localhost:4000/companies/get-companies');
-  const { data, loading: loadingJobs, fetchData, updateUrl } = useApi('http://localhost:4000/jobs/get-jobs');
 
-  const jobs = data?.jobs || [];
-  useEffect(() => {
-    let query = "";
-    if (location) query += `location=${location}&`;
-    if (company_id) query += `company_id=${company_id}&`;
-
-    query = query.slice(0, -1);
-    updateUrl(`http://localhost:4000/jobs/get-jobs?${query}`);
-  }, [location, company_id]);
-
-  
-  const clearSearch = () => {
-    setSerachTitle('');
-    setLocation('');
-    setCompany_id('');
-    fetchData(); 
-  }
+  const { jobs, companies, filters, setFilters, loading, error, clearFilters } = useJobListing();
 
   function handleSubmit(e) {
     e.preventDefault();
     const fd = new FormData(e.target);
     const searchQuery = fd.get('search-query');
-    if(searchQuery){
-      console.log(searchQuery);
-    }
+    setFilters((prev) => ({ ...prev, search: searchQuery }));
   }
   
-
-  if(loadingJobs || loadingCompanies) {
+  if(loading) {
     return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center">Failed to load data. Please try again later.</div>;
   }
 
   return (
@@ -60,11 +35,11 @@ const JobListingPage = () => {
       <form onSubmit={handleSubmit} className="h-14 flex w-full gap-2 items-center mb-3">
         <Input 
           type="text" 
-          value={searchTitle}
+          value={filters.search}
           placeholder="Search Jobs by Title.."
           name="search-query"
           className="h-full flex-1 px-4 text-md"
-          onChange={(e) => setSerachTitle(e.target.value)}
+          onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
         />
         <Button type="submit" className="h-full sm:w-28" variant="blue">
           Search
@@ -73,8 +48,8 @@ const JobListingPage = () => {
 
       <div className="flex flex-col sm:flex-row gap-2">
         <Select 
-          value={location} 
-          onValueChange={(value) => setLocation(value)}
+          value={filters.location} 
+          onValueChange={(value) => setFilters((prev) => ({ ...prev, location: value }))}
         >
           <SelectTrigger>
             <SelectValue placeholder="Filter by Location" />
@@ -93,8 +68,8 @@ const JobListingPage = () => {
         </Select>
 
         <Select
-          value={company_id} 
-          onValueChange={(value) => setCompany_id(value)}
+          value={filters.company_id} 
+          onValueChange={(value) => setFilters((prev) => ({ ...prev, company_id: value }))}
         >
           <SelectTrigger>
             <SelectValue placeholder="Filter by Company" />
@@ -111,13 +86,13 @@ const JobListingPage = () => {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Button variant='destructive' className="sm:w-1/2" onClick={clearSearch}>
+        <Button variant='destructive' className="sm:w-1/2" onClick={clearFilters}>
           Clear Filters
         </Button>
       </div>
 
       <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {jobs?.length ? (jobs.map(job => {
+        {jobs?.length ? (jobs?.map(job => {
           return <JobCard key={job._id} job={job} />
         })) : <div>No Jobs found!</div>}
       </div>
