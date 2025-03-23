@@ -12,9 +12,12 @@ import {
   import { z } from "zod";
   import { zodResolver } from "@hookform/resolvers/zod";
   import { useForm } from "react-hook-form";
-  import { BarLoader } from "react-spinners";
+  // import { BarLoader } from "react-spinners";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useAuth } from "./auth-provider";
+import { useState } from "react";
+import { createCompany } from "@/api/companies.api";
 //   import { useEffect } from "react";
   
   const schema = z.object({
@@ -40,30 +43,39 @@ import { Button } from "./ui/button";
       resolver: zodResolver(schema),
     });
 
-    const loadingAddCompany = false;
-  
-    // const {
-    //   loading: loadingAddCompany,
-    //   error: errorAddCompany,
-    //   data: dataAddCompany,
-    //   fn: fnAddCompany,
-    // } = useFetch(addNewCompany);
+    const [open, setOpen] = useState(false);
   
     const onSubmit = async (data) => {
-    //   fnAddCompany({
-    //     ...data,
-    //     logo: data.logo[0],
-    //   });
+
+      const formData = new FormData();
+      formData.append('name', data.name);
+      formData.append('logo', data.logo[0]);
+      try{
+        const response = await createCompany(formData);
+        fetchCompanies(response);
+        setOpen(false);
+      }catch(err){
+        console.error("Error creating company:", err);
+      }
+      // fetch('http://localhost:4000/companies/create', {
+      //   method: 'POST', 
+      //   headers: { 'Authorization': `Bearer ${token}`},
+      //   body: formData
+      // })
+      // .then(response =>  response.json())
+      // .then((response) => {
+      //   fetchCompanies(response);
+      //   setOpen(false);
+      // })
+      // .catch((err) => {
+      //   console.error("Error updating role:", err);
+      // });
+
     };
-  
-    // useEffect(() => {
-    //   if (dataAddCompany?.length > 0) {
-    //     fetchCompanies();
-    //   }
-    // }, [loadingAddCompany]);
+ 
   
     return (
-      <Drawer>
+      <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
           <Button type="button" size="sm" variant="secondary">
             Add Company
@@ -101,7 +113,7 @@ import { Button } from "./ui/button";
             {/* {errorAddCompany?.message && (
               <p className="text-red-500">{errorAddCompany?.message}</p>
             )} */}
-            {loadingAddCompany && <BarLoader width={"100%"} color="#36d7b7" />}
+            {/* {loadingAddCompany && <BarLoader width={"100%"} color="#36d7b7" />} */}
             <DrawerClose asChild>
               <Button type="button" variant="secondary">
                 Cancel

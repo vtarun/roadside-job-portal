@@ -8,3 +8,12 @@ export async function getCompanies() {
         throw err;
     }
 }
+
+export async function createCompany(formData) {
+    try{
+        return await apiRequest("/companies/create", "POST", formData, true, true); // "hasFile = true" for last params
+    } catch(err) {
+        console.error("Error fetching companies:", err.message);
+        throw err;
+    }
+}
