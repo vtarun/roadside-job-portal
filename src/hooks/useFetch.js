@@ -1,38 +1,36 @@
-import {useState, useEffect} from 'react';
+import { useState, useEffect, useCallback } from "react";
 
-const useFetch = (url, options = {}) => {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [data, setData] = useState([]);
-    
-    useEffect(()=> {
-        if(!url){
-            return;
-        }
-        setLoading(true);
+const useFetch = (apiFunction) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-        const fetchData = async () => {
-            try{
-                const response = await fetch(url, options);
-                if(!response.ok){
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
 
-                const data = await response.json();
+    try {
+      const response = await apiFunction();
 
-                setData(data);
-            } catch(error){                
-                setError(error?.message);
-            } finally{
-                setLoading(false);
-            }
-        }
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-        fetchData();
-    }, [url])
+      const result = await response.json();
+      setData(result);
+    } catch (error) {
+      setError(error?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }, [apiFunction]);
 
+  // Auto-fetch if enabled
+  useEffect(() => {
+      fetchData()
+  }, [fetchData]);
 
-    return {loading, error, data};
-}
+  return { data, loading, error };
+};
 
 export default useFetch;
