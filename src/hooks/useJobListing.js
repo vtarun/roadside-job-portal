@@ -8,6 +8,7 @@ const useJobListing = () => {
   const [filters, setFilters] = useState({ search: "", location: "", company_id: "" });
   const [loadingJobs, setLoadingJobs] = useState(false);
   const [loadingCompanies, setLoadingCompanies] = useState(false);
+  const [search, setSearch] = useState(false);
   const [error, setError] = useState(null);
 
   // Fetch jobs based on filters
@@ -37,10 +38,16 @@ const useJobListing = () => {
         setLoadingCompanies(false);
     }
   };
+  const updateFilterOnSearch  = (searchValue) => {
+    if(search !== searchValue){
+      setSearch(searchValue);
+      setFilters(prev => ({...prev, search: searchValue }));
+    }    
+  }
 
   // Clear filters
   const clearFilters = () => {
-    setFilters({ search: "", location: "", company_id: "" });
+    setFilters({search: "", location: "", company_id: "" });
   };
 
   // Fetch jobs whenever filters change
@@ -55,7 +62,7 @@ const useJobListing = () => {
 
   const loading = loadingJobs || loadingCompanies;
 
-  return { jobs, companies, filters, setFilters, loading, error, clearFilters };
+  return { jobs, companies, filters, setFilters, updateFilterOnSearch, loading, error, clearFilters };
 };
 
 export default useJobListing;
