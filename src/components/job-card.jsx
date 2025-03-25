@@ -2,13 +2,16 @@ import React from 'react'
 import { CardHeader, CardTitle, CardContent, Card, CardFooter } from './ui/card'
 import { Heart, MapPinIcon, Trash2Icon } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Button } from './ui/button'
+import { Button } from './ui/button';
+
+const API_URL = import.meta.env.VITE_JOB_PORTAL_API_URL || "http://localhost:4000"
 
 const JobCard = ({
     job,
     isMyJob = false,
     savedInit = false,
     onJobSaved = () => {},
+    onDeleteJob= () => {}
 }) => {
     const loadingSavedJob = false; //TODO:  get this value from useFetch
     function handleSaveJob() {
@@ -22,16 +25,17 @@ const JobCard = ({
 
             {!isMyJob && (
                 <Trash2Icon 
-                fill="red" 
-                size={18}
-                className="text-red-300 cursor-pointer"
+                  fill="red" 
+                  size={18}
+                  className="text-red-300 cursor-pointer"
+                  onClick={() => onDeleteJob(job._id)}
                 />
             )}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 flex-1">
         <div className='flex justify-between'>
-            {job.company && <img src={job.company.logo_url} className='h-6'/>}
+            {job.company_id && <img src={`${API_URL}${job.company_id.logo_url}`} className='h-6'/>}
             <div className='flex gap-2 items-center'>
                 <MapPinIcon size={15} /> {job.location}
             </div>
