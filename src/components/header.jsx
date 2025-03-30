@@ -7,28 +7,30 @@ import Profile from './profile';
 
 import homeLogo from '/logo.png';
 import profile from '/profile.jpg';
-// import { SignIn } from '@clerk/clerk-react';
 import LoginPage from '@/pages/Login';
+import { useAuth } from './auth-provider';
 
 const Header = () => {
-  const [user, setUser] = useState({role: 'recuiter'});
   const [showSignInForm, setShowSignInForm] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+
+  const { user } = useAuth();
 
   const [search, setSearch] = useSearchParams();
 
   useEffect(() => {
-    if(search.get('sign-in')){
+    if( !user && search.get('sign-in')){
       setShowSignInForm(true);
+    }else{
+      setShowSignInForm(false);
     }
-  }, [search]);
+  }, [search, user]);
 
   const handleOverlayClick = (e) => {
     if(e.target === e.currentTarget){
       setShowSignInForm(false);
-        setSearch({});
-        setShowProfile(false);
+      setSearch({});
+      setShowProfile(false);
     }
   }
 
@@ -42,8 +44,6 @@ const Header = () => {
 
   const handleSuccessfullSignIn = () => {
     setShowSignInForm(false);
-    setShowProfile(true);
-    setIsLoggedIn(true);
   }
 
   return (
@@ -55,28 +55,28 @@ const Header = () => {
 
             <div className="flex gap-8">
                 
-                {!isLoggedIn && <Button variant="outline" onClick={() => setShowSignInForm(true)}>Login</Button>}
+                {!user && <Button variant="outline" onClick={() => setShowSignInForm(true)}>Login</Button>}
                 
-                {isLoggedIn && user?.role === 'recuiter' && <Link to="/post-job">
+                {user && user?.role === 'recuiter' && <Link to="/post-job">
                     <Button variant="destructive" className="rounded-full">
                         <PenBox size={20} className="mr-2" />Post a Job
                     </Button>
                 </Link>}
                 
-                {showProfile && <div className="w-10 h-10 rounded-full border border-red-200 overflow-hidden hover:scale-110">
+                {user && <div className="w-10 h-10 rounded-full border border-red-200 overflow-hidden hover:scale-110">
                     <button onClick={handleProfile}><img src={profile} alt="profile"/></button>
                 </div>          
                 }
             </div>
         </nav>
 
-        {showSignInForm && <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50" onClick={handleOverlayClick}>
-            <LoginPage handleSuccessfullSignIn={handleSuccessfullSignIn}/>
-            {/* <SignIn /> */}
+        {showSignInForm && 
+            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50" onClick={handleOverlayClick}>
+              <LoginPage handleSuccessfullSignIn={handleSuccessfullSignIn}/>
             </div>  
         }
 
-        {showProfile && <Profile handleProfileClick={handleProfileClick}/>}
+        {showProfile && <Profile handleProfileClick={handleProfile}/>}
     </>
  );
 }
