@@ -1,24 +1,20 @@
+import useFetch from "@/hooks/useFetch";
 import ApplicationCard from "./application-card";
-import { useEffect } from "react";
 import { BarLoader } from "react-spinners";
+import { getAppliedJobs } from "@/api/jobs.api";
 
-const CreatedApplications = () => {
-  // const { user } = useUser();
-  const loadingApplications = false;
-  // const {
-  //   loading: loadingApplications,
-  //   data: applications,
-  //   fn: fnApplications,
-  // } = useFetch(getApplications, {
-  //   user_id: user.id,
-  // });
+const CreatedApplications = () => {    
+    const {
+      loading,
+      data: applications,
+      error,
+    } = useFetch(getAppliedJobs);
+  
+    if(error){
+      return <div className="text-red-500 text-center">Failed to load data. Please try again later.</div>;
+    }
 
-  // useEffect(() => {
-  //   fnApplications();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  if (loadingApplications) {
+  if (loading) {
     return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
   }
 
@@ -27,7 +23,7 @@ const CreatedApplications = () => {
       {applications?.map((application) => {
         return (
           <ApplicationCard
-            key={application.id}
+            key={application._id}
             application={application}
             isCandidate={true}
           />
