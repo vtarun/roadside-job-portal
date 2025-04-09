@@ -1,22 +1,18 @@
 import { BarLoader } from "react-spinners";
 import JobCard from "./job-card";
-import { useEffect } from "react";
+import { getCreatedJobs, saveOrRemoveJob } from "@/api/jobs.api";
+import useFetch from "@/hooks/useFetch";
 
-const CreatedJobs = () => {
-  // const { user } = useUser();
-  const loadingCreatedJobs = false;
-  // const {
-  //   loading: loadingCreatedJobs,
-  //   data: createdJobs,
-  //   fn: fnCreatedJobs,
-  // } = useFetch(getMyJobs, {
-  //   recruiter_id: user.id,
-  // });
+const CreatedJobs = () => {  
+  const {
+    loading: loadingCreatedJobs,
+    data: createdJobs,
+    error,
+  } = useFetch(getCreatedJobs);
 
-  // useEffect(() => {
-  //   fnCreatedJobs();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  if(error){
+    return <div className="text-red-500 text-center">Failed to load data. Please try again later.</div>;
+  }
 
   return (
     <div>
@@ -28,10 +24,11 @@ const CreatedJobs = () => {
             createdJobs.map((job) => {
               return (
                 <JobCard
-                  key={job.id}
+                  key={job._id}
                   job={job}
-                  onJobAction={() => {}}
-                  isMyJob
+                  onDeleteJob={() => {}}
+                  onJobSaved={saveOrRemoveJob}
+                  isMyJob={true}
                 />
               );
             })
