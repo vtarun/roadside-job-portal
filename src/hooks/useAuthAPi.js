@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { loginApi, signUpAPi } from "@/api/auth.api";
 
 const useAuthApi = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const loginUser = async (email, password) => {
+    const loginUser = useCallback(async (email, password) => {
         setLoading(true);
         setError(null);
         try{
@@ -17,9 +17,9 @@ const useAuthApi = () => {
         } finally{
             setLoading(false);
         }
-    }
+    })
 
-    const signUpUser = async (firstname, lastname, email, password) => {
+    const signUpUser =  useCallback(async (firstname, lastname, email, password) => {
         setLoading(true);
         setError(null);
         try{
@@ -31,7 +31,7 @@ const useAuthApi = () => {
         }finally{
             setLoading(false);
         }
-    }
+    })
 
     return { loading, error, loginUser, signUpUser };
 }

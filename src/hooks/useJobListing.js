@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getAllJobs } from "@/api/jobs.api";
+import { getAllJobs, deleteJob, saveOrRemoveJob as updateSavedJobs } from "@/api/jobs.api";
 import { getCompanies } from "@/api/companies.api";
 
 const useJobListing = () => {
@@ -25,6 +25,22 @@ const useJobListing = () => {
     }
   };
 
+  const deleteJobById = async (jobId) => {
+    setLoadingJobs(true);
+    setError(null);
+    try {
+      const remainingJobs = await deleteJob(jobId);
+      if(response.error){
+        return;
+      }
+      setJobs(remainingJobs.jobs || []);
+    } catch (err) {
+      setError(err.message || "Failed to delete job");
+    } finally {
+      setLoadingJobs(false);
+    }
+  };
+
   // Fetch companies
   const fetchCompanies = async () => {
     setLoadingCompanies(true);
@@ -38,12 +54,23 @@ const useJobListing = () => {
         setLoadingCompanies(false);
     }
   };
+  
   const updateFilterOnSearch  = (searchValue) => {
     if(search !== searchValue){
       setSearch(searchValue);
       setFilters(prev => ({...prev, search: searchValue }));
     }    
-  }
+  };
+
+  // const saveOrRemoveJob = async (jobId) => {
+  //   setError(null);
+  //   try {
+  //     const savedJobs = await updateSavedJobs(jobId);
+  //     setJobs(savedJobs.jobs || []);
+  //   } catch (err) {
+  //     setError(err.message || "Failed to wishlist job");
+  //   }
+  // };
 
   // Clear filters
   const clearFilters = () => {
@@ -62,7 +89,7 @@ const useJobListing = () => {
 
   const loading = loadingJobs || loadingCompanies;
 
-  return { jobs, companies, filters, setFilters, updateFilterOnSearch, loading, error, clearFilters };
+  return { jobs, companies, filters, setFilters, updateFilterOnSearch, deleteJobById, loading, error, clearFilters };
 };
 
 export default useJobListing;

@@ -11,13 +11,7 @@ const useFetch = (apiFunction) => {
 
     try {
       const response = await apiFunction();
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      setData(result);
+      setData(response);
     } catch (error) {
       setError(error?.message || "Something went wrong");
     } finally {
@@ -27,7 +21,7 @@ const useFetch = (apiFunction) => {
 
   // Auto-fetch if enabled
   useEffect(() => {
-      fetchData()
+    fetchData();
   }, [fetchData]);
 
   return { data, loading, error };
