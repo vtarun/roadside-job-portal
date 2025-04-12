@@ -3,31 +3,27 @@ import { BarLoader } from 'react-spinners';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import useFetch from '@/hooks/useFetch';
+import { useAuth } from '@/components/auth-provider';
 
 const OnboardingPage = () => {
-  const {data, loading } = useFetch('http://localhost:4000/profile/user', {
-      method: 'GET', 
-      headers: { 
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${localStorage.getItem("token")}`
-       }
-  });
+  const {user, loading, token, updateRole} = useAuth();
+
   const navigate = useNavigate();
 
-  const navigateUser = (role) => {
-    navigate(role === 'recruiter' ? "/post-job" : "/jobs");
-  }
+  // const navigateUser = (role) => {
+  //   navigate(role === 'recruiter' ? "/post-job" : "/jobs");
+  // }
 
-  const handleSelection = async (role) => {
-    const email = 'vt2@gmail.com';
+  const handleSelection = (role) => {
     fetch('http://localhost:4000/profile/user', {
       method: 'PUT', 
-      headers: { "Content-Type": "application/json" , 'Authorization': `Bearer ${localStorage.getItem("token")}`},
-      body: JSON.stringify({email, role})
+      headers: { "Content-Type": "application/json" , 'Authorization': `Bearer ${token}`},
+      body: JSON.stringify({role})
     })
     .then(response =>  response.json())
     .then((response) => {
-      navigateUser(response?.user?.role);
+      updateRole(response.user);
+      // navigateUser(response?.user?.role);
     })
     .catch((err) => {
       console.error("Error updating role:", err);
@@ -35,10 +31,11 @@ const OnboardingPage = () => {
   };
 
   useEffect(() => {
-    if (data?.role) {
-      navigateUser(user.role);
+    if (user?.role) {
+      // navigateUser(user.role);
+      navigate(user.role === 'recruiter' ? "/post-job" : "/jobs");
     }
-  }, [data]);
+  }, [user, navigate]);
 
   if(loading) {
     return <BarLoader className="mb-4" width={"100%"} color="red" />;

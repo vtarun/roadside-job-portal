@@ -6,13 +6,15 @@ import { z } from "zod";
 
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectValue, SelectItem } from '@/components/ui/select';
 import { State } from "country-state-city";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
 import AddCompanyDrawer from "@/components/add-company-drawer";
 import { Button } from "@/components/ui/button";
-import useFetch from "@/hooks/useFetch";
 import { BarLoader } from "react-spinners";
+import { useAuth } from "@/components/auth-provider";
+import { getCompanies } from "@/api/companies.api";
+import { postJob } from "@/api/jobs.api";
 
 
 const schema = z.object({
@@ -23,8 +25,10 @@ const schema = z.object({
   requirements: z.string().min(1, {message: "requirements are required"}),
 })
 const PostJobPage = () => {
-  const user = {role : "recruiter"};
+  const {user, token} = useAuth();
   const [creatJobLoading, setCreateJobLoading] = useState(false);
+  const [companies, setCompanies] = useState([]);
+  const [loadingCompany, setLoadingCompany] = useState(false);
   const navigate = useNavigate();
   
   const {
@@ -37,29 +41,34 @@ const PostJobPage = () => {
     resolver: zodResolver(schema)
   });
 
-  const {data: companies, loading: loadingCompany} = useFetch('http://localhost:4000/companies/get-companies', {
-      method: 'GET', 
-      headers: { 
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${localStorage.getItem("token")}`
-       }
-  });
+  // const {data: companies, loading: loadingCompany} = useFetch(getCompanies);
+
+  const fetchCompanies = async () => {
+    setLoadingCompany(true);
+    try{
+      const response = await getCompanies();
+      setCompanies(response);
+    } catch(err){
+      console.error("Error fetching companies:", error);
+    }finally{
+      setLoadingCompany(false)
+    }
+  };
+
+  useEffect(() => {
+    fetchCompanies();
+  },[])
+
+  if(user?.role !== 'recruiter'){
+    return <Navigate to="/jobs"/>
+  }
 
   const onSubmit = async (data) => {
-    data.recruiter_id = 'vt2@gmail.com';
+    data.recruiter_id = user.user_id;
     setCreateJobLoading(true);
     console.log(data);
     try{
-      const response = await fetch('http://localhost:4000/jobs/post-job', {
-        method: 'POST', 
-        headers: { 
-          "Content-Type": "application/json",
-          'Authorization': `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify(data)
-      });
-      const responseData = await response.json();
-      // TODO: update properly
+      await postJob(data);
       navigate("/jobs");
     } catch(err){
       console.log(err)
@@ -70,10 +79,6 @@ const PostJobPage = () => {
 
   if(loadingCompany) {
     return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
-  }
-
-  if(user?.role !== 'recruiter'){
-    return <Navigate to="/jobs"/>
   }
 
   return (
@@ -141,7 +146,7 @@ const PostJobPage = () => {
               </Select>
             )} 
           />
-          <AddCompanyDrawer fetchCompanies={() => {}} />
+          <AddCompanyDrawer fetchCompanies={setCompanies} />
         </div>
         {errors.location && <p className="text-red-500">{errors.location.message}</p>}
         {errors.company_id && <p className="text-red-500">{errors.company_id.message}</p>}

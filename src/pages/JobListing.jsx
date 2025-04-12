@@ -6,20 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectValue, SelectItem } from "@/components/ui/select";
 import { State } from "country-state-city";
 import useJobListing from "@/hooks/useJobListing";
+import { useAuth } from "@/components/auth-provider";
 
 const JobListingPage = () => {
-  const { jobs, companies, filters, setFilters, updateFilterOnSearch, loading, error, clearFilters } = useJobListing();
-
+  const { jobs, companies, filters, setFilters, deleteJobById, updateFilterOnSearch, loading, error, clearFilters } = useJobListing();
+  const { user, saveOrRemoveJob } = useAuth();
   const handleSubmit = (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
     const searchQuery = fd.get("search-query");
     updateFilterOnSearch(searchQuery);
   };
-
-  // if (loading) {
-  //   return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
-  // }
 
   if (error) {
     return <div className="text-red-500 text-center">Failed to load data. Please try again later.</div>;
@@ -82,15 +79,15 @@ const JobListingPage = () => {
           Clear Filters
         </Button>
       </div>
-      {loading ? (<BarLoader className="mb-4" width={"100%"} color="#36d7b7" />) : 
-      (<div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {jobs?.length ? (
-          jobs.map((job) => <JobCard key={job._id} job={job} />)
-        ) : (
-          <div>No Jobs found!</div>
-        )}
-      </div>)
-}
+      {loading ? (<BarLoader className="mb-4" width={"100%"} color="#36d7b7" />) :
+        (<div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {jobs?.length ? (
+            jobs.map((job) => <JobCard key={job._id} job={job} savedInit={user.savedJobs.includes(job._id)} isMyJob={user.user_id === job.recruiter_id} onJobSaved={saveOrRemoveJob} onDeleteJob={deleteJobById} />)
+          ) : (
+            <div>No Jobs found!</div>
+          )}
+        </div>)
+      }
     </div>
   );
 };

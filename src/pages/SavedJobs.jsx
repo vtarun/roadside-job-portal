@@ -1,24 +1,20 @@
+import { getSavedJobs } from "@/api/jobs.api";
+import { useAuth } from "@/components/auth-provider";
 import JobCard from "@/components/job-card";
-import { useEffect } from "react";
+import useFetch from "@/hooks/useFetch";
+// import { useEffect } from "react";
 import { BarLoader } from "react-spinners";
 
 const SavedJobsPage = () => {
-  const { isLoaded } = useUser();
+  const {user} = useAuth();
 
-  // const {
-  //   loading: loadingSavedJobs,
-  //   data: savedJobs,
-  //   fn: fnSavedJobs,
-  // } = useFetch(getSavedJobs);
+  const {
+    loading: loadingSavedJobs,
+    data: savedJobs,
+    error,
+  } = useFetch(getSavedJobs);
 
-  // useEffect(() => {
-  //   if (isLoaded) {
-  //     fnSavedJobs();
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [isLoaded]);
-
-  if (!isLoaded || loadingSavedJobs) {
+  if (loadingSavedJobs) {
     return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
   }
 

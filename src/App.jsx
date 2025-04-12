@@ -16,9 +16,11 @@ import ProtectedRoute from './components/protected-route';
 import LoginPage from './pages/Login';
 import { AuthProvider } from './components/auth-provider';
 
+import { ROUTES } from "./constants/routes";
+
 const router = createBrowserRouter([
     {   
-        path: '/',
+        path: ROUTES.LANDING,
         element: <AppRootLayout />,
         errorElement: <ErrorPage />,
         children: [
@@ -27,11 +29,11 @@ const router = createBrowserRouter([
                 element: <LandingPage />,
             },
             {
-                path: '/login',
+                path: ROUTES.LOGIN,
                 element: <LoginPage />
             },
             {
-                path: '/onboarding',
+                path: ROUTES.ONBOARDING,
                 element: (
                     <ProtectedRoute>
                         <OnboardingPage />
@@ -39,7 +41,7 @@ const router = createBrowserRouter([
                 ),
             },
             {
-                path: '/jobs',
+                path: ROUTES.JOB_LISTING,
                 element: (
                     <ProtectedRoute>
                         <JobListingPage />
@@ -47,7 +49,7 @@ const router = createBrowserRouter([
                 ),
             },
             {
-                path: '/job/:id',
+                path: ROUTES.JOB_DETAILS,
                 element: (
                     <ProtectedRoute>
                         <JobPage />
@@ -55,7 +57,7 @@ const router = createBrowserRouter([
                 ),
             },
             {
-                path: '/post-job',
+                path: ROUTES.POST_JOB,
                 element: (
                     <ProtectedRoute>
                         <PostJobPage />
@@ -63,7 +65,7 @@ const router = createBrowserRouter([
                 ),
             },
             {
-                path: '/my-jobs',
+                path: ROUTES.MY_JOBS,
                 element: (
                     <ProtectedRoute>
                         <MyJobsPage />
@@ -71,7 +73,7 @@ const router = createBrowserRouter([
                 ),
             },
             {
-                path: '/saved-jobs',
+                path: ROUTES.SAVED_JOBS,
                 element: (
                     <ProtectedRoute>
                         <SavedJobsPage />

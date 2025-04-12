@@ -12,7 +12,7 @@ const RootLayout = () => {
         <Outlet />
       </main>
       <div className="p-10 text-center bg-gray-800 mt-10">
-        Inspired by 💗 RoadsideCoder and Implemented by Vivek
+        Inspired from 💗 RoadsideCoder and Implemented by Vivek Tarun
       </div>
     </div>
   )
