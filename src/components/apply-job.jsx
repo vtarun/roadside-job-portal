@@ -50,31 +50,34 @@ const ApplyJobDrawer = ({user, job, applied=false, fetchJob}) => {
     const loadingApply = false; // TODO: for Job apply loading
 
     const onSubmit = (data) => {
-        console.log(data);
-        const formData = {
+        const updatedData = {
             ...data,
             job_id: job._id,
-            candidate_id: user.email, //user._id
+            candidate_id: user.user_id,
             name: user?.fullname,
             status: 'applied',
             resume: data.resume[0]
-        }
-        console.log(formData);
+        };
+        const formData = new FormData();
+        Object.keys(updatedData).map(item => {
+            formData.append(item, updatedData[item]);
+        })
         fetch(`http://localhost:4000/applications/apply-job`, {
               method: "POST",
               headers: {
-                "Content-Type": "application/json",
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
-              body: JSON.stringify({ formData }),
+              body: formData,
             }
-        ).then(() => {
-            console.log(formData);
+        ).then((response) => response.json())
+         .then((response) =>{
+            console.log(response);
             fetchJob();
             reset();
         })
-
-        
+        .catch(err => {
+            console.log(err);
+        })        
     }
 
   return (

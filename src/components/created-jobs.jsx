@@ -1,14 +1,39 @@
+import { useEffect, useState } from "react";
 import { BarLoader } from "react-spinners";
 import JobCard from "./job-card";
-import { getCreatedJobs, saveOrRemoveJob } from "@/api/jobs.api";
+import { getCreatedJobs, deleteJob } from "@/api/jobs.api";
 import useFetch from "@/hooks/useFetch";
 
 const CreatedJobs = () => {  
   const {
     loading: loadingCreatedJobs,
-    data: createdJobs,
+    data,
     error,
   } = useFetch(getCreatedJobs);
+
+  const [createdJobs, setJobs] = useState(data?.jobs || []);
+
+  useEffect(() => {
+    if (data?.jobs) {
+      setJobs(data.jobs);
+    }
+  }, [data]);
+
+  const handleDeleteJob = async (jobId) => {
+    try {
+      await deleteJob(jobId);
+      // toast.success("Job deleted successfully!");
+      // Update the local state to remove the deleted job
+      setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
+    } catch (err) {
+      if (err.response && err.response.status === 403) {
+        toast.error("You are not authorized to delete this job.");
+      } else {
+        toast.error("Failed to delete job. Please try again.");
+      }
+    }
+  };
+
 
   if(error){
     return <div className="text-red-500 text-center">Failed to load data. Please try again later.</div>;
@@ -26,8 +51,7 @@ const CreatedJobs = () => {
                 <JobCard
                   key={job._id}
                   job={job}
-                  onDeleteJob={() => {}}
-                  onJobSaved={saveOrRemoveJob}
+                  onDeleteJob={handleDeleteJob}
                   isMyJob={true}
                 />
               );

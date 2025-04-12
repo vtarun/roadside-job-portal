@@ -13,17 +13,14 @@ const JobCard = ({
     onJobSaved = () => {},
     onDeleteJob= () => {}
 }) => {
-    const loadingSavedJob = false; //TODO:  get this value from useFetch
-    function handleSaveJob() {
-        
-    }
+    
   return (
     <Card className="flex flex-col">
       <CardHeader>
         <CardTitle className="flex justify-between font-bold">
             {job.title}
 
-            {!isMyJob && (
+            {isMyJob && (
                 <Trash2Icon 
                   fill="red" 
                   size={18}
@@ -50,7 +47,7 @@ const JobCard = ({
           </Button>
         </Link>
         {!isMyJob && (
-            <Button variant="outline" className="w-15" onClick={handleSaveJob} disabled={loadingSavedJob}>
+            <Button variant="outline" className="w-15" onClick={() => onJobSaved(job._id)}>
                 {savedInit ? <Heart size={20} stroke="red" fill="red"/> : <Heart size={20} />}
             </Button>
         )}
