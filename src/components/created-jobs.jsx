@@ -27,9 +27,9 @@ const CreatedJobs = () => {
       setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
     } catch (err) {
       if (err.response && err.response.status === 403) {
-        toast.error("You are not authorized to delete this job.");
+        // toast.error("You are not authorized to delete this job.");
       } else {
-        toast.error("Failed to delete job. Please try again.");
+        // toast.error("Failed to delete job. Please try again.");
       }
     }
   };

@@ -6,7 +6,7 @@ import { getAppliedJobs } from "@/api/jobs.api";
 const CreatedApplications = () => {    
     const {
       loading,
-      data: applications,
+      data : applications,
       error,
     } = useFetch(getAppliedJobs);
   
@@ -20,15 +20,20 @@ const CreatedApplications = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      {applications?.map((application) => {
-        return (
-          <ApplicationCard
-            key={application._id}
-            application={application}
-            isCandidate={true}
-          />
-        );
-      })}
+      {applications?.length ? 
+      (
+        applications?.map((application) => {
+          return (
+            <ApplicationCard
+              key={application._id}
+              application={application}
+              isCandidate={true}
+            />
+          );
+        })
+      ) :
+      (<div>No Jobs Found 😢</div>)
+    }
     </div>
   );
 };
