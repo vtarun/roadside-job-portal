@@ -7,6 +7,7 @@ import ApplyJobDrawer from '@/components/apply-job';
 import { BarLoader } from 'react-spinners';
 import { useAuth } from '@/components/auth-provider';
 import useJobApi from '@/hooks/useJobApi';
+import ApplicationCard from '@/components/application-card';
 
 const API_URL = import.meta.env.VITE_JOB_PORTAL_API_URL || "http://localhost:4000"
 

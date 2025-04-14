@@ -5,16 +5,17 @@ import { Select, SelectTrigger, SelectContent, SelectGroup, SelectValue, SelectI
 
 const ApplicationCard = ({application, isCandidate=false}) => {
     
-    const handleDownload =() => {
+    const handleDownload = () => {
       var link = document.createElement("a");
-      link.href = application?.resume;
+      const baseUrl = import.meta.env.VITE_JOB_PORTAL_API_URL;
+      link.href = `${baseUrl}/${application?.resume}`;
       link.target = "_blank";
       link.click();
     }
 
-    const handleStatusChange =(status) => {
+    const handleStatusChange = (status) => {
       console.log(status);
-      /// call api to update status
+      // call api to update status
     }
 
     return (
@@ -29,7 +30,7 @@ const ApplicationCard = ({application, isCandidate=false}) => {
 
                 <Download 
                     size={18}
-                    onCLick={handleDownload}
+                    onClick={handleDownload}
                     className='bg-white text-black rounded-full h-8 w-8 p-1.5 cursor-pointer'
                 />
             </CardTitle>
