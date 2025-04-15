@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './auth-provider';
 
 const Profile = ({handleProfileClick}) => {
-    const { logout} = useAuth();
+    const {user, logout} = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -19,7 +19,7 @@ const Profile = ({handleProfileClick}) => {
                 <span className="w-12 h-12 rounded-full border overflow-hidden">
                     <img src={profile} alt="profile"/>
                 </span>
-                <span className='font-medium'>vt1@gmail.com</span>
+                <span className='font-medium'>{user?.email}</span>
             </div>
             <div className="border-t-[1px] border-[rgba(255,255,255,0.07)] flex p-4 items-center w-full profile__item">
                 <button className="flex items-center gap-8 px-4 "><Settings size={18}/>Manage account</button>
