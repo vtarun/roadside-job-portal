@@ -1,6 +1,8 @@
 
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import './App.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider } from "@/components/theme-provider"
 
 import AppRootLayout from './layouts/RootLayout';
@@ -87,11 +89,15 @@ const router = createBrowserRouter([
 function App() {
 
   return (
+    <>
+    
+    <ToastContainer />
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <AuthProvider>
             <RouterProvider router={router} />
         </AuthProvider>
-    </ThemeProvider>      
+    </ThemeProvider>  
+    </>    
   )
 }
 

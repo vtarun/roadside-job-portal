@@ -1,7 +1,9 @@
 import React from 'react'
+import { toast } from "react-toastify";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Boxes, BriefcaseBusiness, Download, School } from 'lucide-react';
 import { Select, SelectTrigger, SelectContent, SelectGroup, SelectValue, SelectItem } from '@/components/ui/select';
+import { updateApplicationStatus } from '@/api/applications.api';
 
 const ApplicationCard = ({application, isCandidate=false}) => {
     
@@ -13,9 +15,20 @@ const ApplicationCard = ({application, isCandidate=false}) => {
       link.click();
     }
 
-    const handleStatusChange = (status) => {
-      console.log(status);
-      // call api to update status
+    const handleStatusChange = async (status) => {
+      try{        
+        await updateApplicationStatus(status, application._id);
+        application.status = status
+        toast.success("Application status updated successfully!");
+      }catch(err){
+        if (err.response && err.response.status === 403) {
+          toast.error("You are not authorized to update the status.");
+        } else {
+          toast.error("Failed to update application status. Please try again.");
+        }
+      }
+
+      
     }
 
     return (
