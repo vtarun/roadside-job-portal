@@ -54,7 +54,7 @@ const ApplyJobDrawer = ({user, job, applied=false, fetchJob}) => {
             ...data,
             job_id: job._id,
             candidate_id: user.user_id,
-            name: user?.fullname,
+            name: user?.firstname + " " +user?.lastname,
             status: 'applied',
             resume: data.resume[0]
         };
@@ -90,8 +90,8 @@ const ApplyJobDrawer = ({user, job, applied=false, fetchJob}) => {
         </DrawerTrigger>
         <DrawerContent>
             <DrawerHeader>
-            <DrawerTitle>Apply for {job?.title} at {job?.company?.name}</DrawerTitle>
-            <DrawerDescription>Please fill the form below.</DrawerDescription>
+                <DrawerTitle>Apply for {job?.title} at {job?.company?.name}</DrawerTitle>
+                <DrawerDescription>Please fill the form below.</DrawerDescription>
             </DrawerHeader>
 
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4 pb-0">

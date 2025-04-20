@@ -6,7 +6,7 @@ import { getAppliedJobs } from "@/api/jobs.api";
 const CreatedApplications = () => {    
     const {
       loading,
-      data : applications,
+      data,
       error,
     } = useFetch(getAppliedJobs);
   
@@ -17,7 +17,7 @@ const CreatedApplications = () => {
   if (loading) {
     return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
   }
-
+const applications = data?.jobs;
   return (
     <div className="flex flex-col gap-2">
       {applications?.length ? 

@@ -6,11 +6,11 @@ import useFetch from "@/hooks/useFetch";
 import { BarLoader } from "react-spinners";
 
 const SavedJobsPage = () => {
-  const {user} = useAuth();
+  const {user, saveOrRemoveJob} = useAuth();
 
   const {
     loading: loadingSavedJobs,
-    data: savedJobs,
+    data,
     error,
   } = useFetch(getSavedJobs);
 
@@ -18,6 +18,10 @@ const SavedJobsPage = () => {
     return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
   }
 
+  if(error) {
+    return <div className="text-red-500 text-center">Failed to load data. {error}.</div>;
+  }
+  const savedJobs = data?.savedJobs;
   return (
     <div>
       <h1 className="gradient-title font-extrabold text-6xl sm:text-7xl text-center pb-8">
@@ -27,12 +31,12 @@ const SavedJobsPage = () => {
       {loadingSavedJobs === false && (
         <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {savedJobs?.length ? (
-            savedJobs?.map((saved) => {
+            savedJobs?.map((job) => {
               return (
                 <JobCard
-                  key={saved.id}
-                  job={saved?.job}
-                  onJobAction={fnSavedJobs}
+                  key={job._id}
+                  job={job}
+                  onJobSaved={saveOrRemoveJob}
                   savedInit={true}
                 />
               );

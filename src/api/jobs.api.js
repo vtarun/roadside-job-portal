@@ -48,7 +48,7 @@ export async function getJobById(jobId) {
 
 export async function getSavedJobs() {
     try {
-        return await apiRequest(`/profile/saved-jobs`, "GET", null, true);
+        return await apiRequest(`/jobs/saved-jobs`, "GET", null, true);
     } catch (err) {
         console.error("Error fetching jobs:", err.message);
         throw err;
